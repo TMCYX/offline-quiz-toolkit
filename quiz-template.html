@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>ENG4001 Project Management Quiz</title>
+<style>
+  :root {
+    --bg: #f6f6f7;
+    --surface: #ffffff;
+    --ink: #1b1b1f;
+    --ink-soft: #55555e;
+    --ink-faint: #8a8a93;
+    --line: #e4e4e8;
+    --line-strong: #d3d3d9;
+    --accent: #1b1b1f;
+    --correct-bg: #d9f2dd;
+    --correct-border: #7cc47f;
+    --correct-ink: #1e6b25;
+    --wrong-bg: #fde0e0;
+    --wrong-border: #e7a3a3;
+    --wrong-ink: #9c2f2f;
+    --radius: 12px;
+    --radius-sm: 10px;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", "Heiti TC", sans-serif;
+    --mono: "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    text-rendering: optimizeLegibility;
+    min-height: 100vh;
+  }
+
+  button {
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 16px calc(24px + env(safe-area-inset-bottom, 0px));
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ---------- Start screen ---------- */
+  .start {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+  .brand-chip {
+    display: inline-block;
+    align-self: flex-start;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    background: #ededf0;
+    border-radius: 999px;
+    padding: 5px 12px;
+    margin-bottom: 22px;
+  }
+  h1.title {
+    font-size: 30px;
+    line-height: 1.18;
+    letter-spacing: -0.02em;
+    margin: 0 0 14px;
+    font-weight: 700;
+  }
+  .subtitle {
+    font-size: 16px;
+    color: var(--ink-soft);
+    margin: 0 0 10px;
+  }
+  .meta-line {
+    font-size: 14px;
+    color: var(--ink-faint);
+    margin: 0 0 34px;
+  }
+  .start-note {
+    font-size: 13px;
+    color: var(--ink-faint);
+    margin-top: 16px;
+    text-align: center;
+  }
+
+  .btn {
+    display: block;
+    width: 100%;
+    min-height: 52px;
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    color: var(--ink);
+    border-radius: var(--radius-sm);
+    font-size: 16px;
+    font-weight: 500;
+    padding: 13px 16px;
+    cursor: pointer;
+    transition: background-color .15s ease, border-color .15s ease, transform .05s ease;
+  }
+  .btn:active { transform: scale(0.985); }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    font-weight: 600;
+    font-size: 17px;
+    min-height: 56px;
+  }
+  .btn-primary:active { background: #33333a; }
+
+  .btn-next { margin-top: 18px; }
+
+  :focus-visible {
+    outline: 3px solid #9dbdf0;
+    outline-offset: 2px;
+  }
+
+  /* ---------- Question screen ---------- */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: var(--bg);
+    padding-top: calc(14px + env(safe-area-inset-top, 0px));
+    padding-bottom: 12px;
+  }
+  .topbar-inner { max-width: 600px; margin: 0 auto; padding: 0 16px; }
+  .topline {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .progress-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-soft);
+  }
+  .score-label {
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+  .score-label strong { color: var(--ink); font-size: 15px; }
+
+  .bar {
+    height: 6px;
+    background: #e3e3e7;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    border-radius: 999px;
+    transition: width .3s ease;
+  }
+
+  .chip {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: var(--ink-soft);
+    background: #ececef;
+    border-radius: 999px;
+    padding: 4px 11px;
+    margin: 18px 0 12px;
+  }
+
+  .qtext {
+    font-size: 19px;
+    line-height: 1.5;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0 0 20px;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+    min-height: 48px;
+    text-align: left;
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-sm);
+    padding: 13px 14px;
+    font-size: 16px;
+    line-height: 1.45;
+    color: var(--ink);
+    cursor: pointer;
+    transition: background-color .15s ease, border-color .15s ease, transform .05s ease;
+  }
+  .option:not([disabled]):active { transform: scale(0.99); }
+  .option[disabled] { cursor: default; }
+
+  .option .mark {
+    flex: 0 0 22px;
+    height: 22px;
+    margin-top: 1px;
+    border-radius: 50%;
+    border: 1.5px solid var(--line-strong);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 19px;
+    text-align: center;
+    color: var(--ink-faint);
+    background: #fafafa;
+  }
+  .option .otext { flex: 1 1 auto; }
+
+  .option.is-correct {
+    background: var(--correct-bg);
+    border-color: var(--correct-border);
+    color: var(--correct-ink);
+  }
+  .option.is-correct .mark {
+    border-color: var(--correct-border);
+    background: #bfe8c5;
+    color: var(--correct-ink);
+  }
+  .option.is-wrong {
+    background: var(--wrong-bg);
+    border-color: var(--wrong-border);
+    color: var(--wrong-ink);
+  }
+  .option.is-wrong .mark {
+    border-color: var(--wrong-border);
+    background: #f6cccc;
+    color: var(--wrong-ink);
+  }
+  .option.is-dim { opacity: .62; }
+
+  .feedback {
+    margin: 18px 0 0;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .feedback.ok { color: var(--correct-ink); }
+  .feedback.no { color: var(--wrong-ink); }
+
+  .explain {
+    margin-top: 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 16px 16px 6px;
+  }
+  .explain-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 6px;
+  }
+  .explain p {
+    margin: 0 0 12px;
+    font-size: 15.5px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .explain .zh { color: #33333a; }
+  .divider {
+    height: 1px;
+    background: var(--line);
+    margin: 4px 0 14px;
+  }
+
+  /* ---------- Results ---------- */
+  .results-head { padding: 22px 0 6px; }
+  .score-big {
+    font-size: 56px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin: 6px 0 8px;
+  }
+  .score-big small { font-size: 24px; color: var(--ink-faint); font-weight: 600; }
+  .verdict { font-size: 17px; color: var(--ink-soft); margin: 0 0 6px; }
+
+  .review-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 28px 0 12px;
+  }
+  .review { display: flex; flex-direction: column; gap: 10px; }
+  details.review-item {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+  details.review-item > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 15.5px;
+    line-height: 1.45;
+  }
+  details.review-item > summary::-webkit-details-marker { display: none; }
+  details.review-item > summary::after {
+    content: "+";
+    flex: 0 0 auto;
+    font-size: 20px;
+    line-height: 1;
+    color: var(--ink-faint);
+    font-weight: 400;
+  }
+  details.review-item[open] > summary::after { content: "\2212"; }
+  .review-q { flex: 1 1 auto; font-weight: 600; }
+  .review-body {
+    padding: 0 16px 16px;
+    border-top: 1px solid var(--line);
+  }
+  .review-answer {
+    display: inline-block;
+    margin: 14px 0 12px;
+    background: var(--correct-bg);
+    color: var(--correct-ink);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14.5px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  .review-answer .k {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: .8;
+    margin-bottom: 2px;
+  }
+  .review-body .explain { margin-top: 0; }
+
+  .empty-note {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px;
+    font-size: 15px;
+    color: var(--ink-soft);
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+
+<noscript>
+  <div style="max-width:600px;margin:16px auto;padding:14px 16px;background:#fff4e5;border:1px solid #f0d9b0;border-radius:10px;font:15px/1.5 -apple-system,'Segoe UI',Roboto,'Microsoft JhengHei',sans-serif;color:#7a5200">
+    This quiz needs JavaScript to run. Please open this file in Safari or Chrome (you are currently viewing it in an app that blocks scripts).<br>
+    此測驗需要 JavaScript 先運行到。請改用 Safari 或 Chrome 打開呢個檔案（你而家睇緊嘅 app 阻止咗 script 執行）。
+  </div>
+</noscript>
+
+<!-- ============ START SCREEN ============ -->
+<section id="screen-start" class="screen active" aria-label="Start">
+  <div class="wrap start">
+    <span class="brand-chip">ENG4001</span>
+    <h1 class="title">ENG4001 Project Management Quiz</h1>
+    <p class="subtitle">Lecture 1-4 &middot; 100-question bank &middot; 10 random questions per round</p>
+    <p class="meta-line" id="pool-count">Loading question bank&hellip;</p>
+    <button id="btn-start" class="btn btn-primary" type="button">Start Quiz</button>
+    <p class="start-note">Offline &middot; No internet required</p>
+  </div>
+</section>
+
+<!-- ============ QUESTION SCREEN ============ -->
+<section id="screen-question" class="screen" aria-label="Question">
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="topline">
+        <span class="progress-label" id="progress-label">Question 1 / 10</span>
+        <span class="score-label">Score <strong id="score-label">0</strong></span>
+      </div>
+      <div class="bar" role="progressbar" aria-label="Round progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress-bar">
+        <div class="bar-fill" id="progress-fill"></div>
+      </div>
+    </div>
+  </div>
+  <div class="wrap">
+    <span class="chip" id="q-chip" hidden></span>
+    <p class="qtext" id="q-text"></p>
+    <div class="options" id="options" role="group" aria-label="Answer options"></div>
+
+    <p class="feedback" id="feedback" role="status" aria-live="polite"></p>
+
+    <div class="explain" id="explain" hidden>
+      <p class="explain-label">Explanation</p>
+      <p id="explain-en"></p>
+      <div class="divider" role="separator"></div>
+      <p class="explain-label">中文解釋</p>
+      <p class="zh" id="explain-zh"></p>
+    </div>
+
+    <button id="btn-next" class="btn btn-primary btn-next" type="button" hidden>Next Question</button>
+  </div>
+</section>
+
+<!-- ============ RESULTS SCREEN ============ -->
+<section id="screen-results" class="screen" aria-label="Results">
+  <div class="wrap">
+    <div class="results-head">
+      <span class="brand-chip">Round complete</span>
+      <p class="score-big" id="result-score">0 <small>/ 0</small></p>
+      <p class="verdict" id="result-verdict"></p>
+    </div>
+    <p class="review-title">Review</p>
+    <div class="review" id="review"></div>
+    <button id="btn-again" class="btn btn-primary btn-next" type="button">Play Again</button>
+  </div>
+</section>
+
+<script id="quiz-data" type="application/json">__QUIZ_DATA__</script>
+
+<script>
+(function () {
+  "use strict";
+
+  var ROUND_SIZE = 10;
+  var LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H"];
+
+  /* ---------- helpers ---------- */
+
+  function safeArray(v) { return Array.isArray(v) ? v : []; }
+  function asText(v) {
+    if (v === null || v === undefined) return "";
+    return String(v);
+  }
+
+  // Fisher-Yates shuffle on a copy.
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  // Sample up to n distinct items without replacement.
+  function sampleDistinct(items, n) {
+    if (!items.length) return [];
+    var shuffled = shuffle(items);
+    return shuffled.slice(0, Math.min(n, shuffled.length));
+  }
+
+  // Decode a base64 string to a UTF-8 JS string, with fallbacks for old browsers.
+  function decodeB64Utf8(b64) {
+    b64 = String(b64).replace(/[\s\r\n]+/g, "");
+    var bin = "";
+    if (typeof atob === "function") {
+      bin = atob(b64);
+    } else {
+      var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+      var buffer = 0, bits = 0;
+      for (var i = 0; i < b64.length; i++) {
+        var c = b64.charAt(i);
+        if (c === "=") break;
+        var idx = chars.indexOf(c);
+        if (idx < 0) continue;
+        buffer = (buffer << 6) | idx;
+        bits += 6;
+        if (bits >= 8) {
+          bits -= 8;
+          bin += String.fromCharCode((buffer >> bits) & 0xFF);
+        }
+      }
+    }
+    if (typeof TextDecoder === "function" && typeof Uint8Array === "function") {
+      var bytes = new Array(bin.length);
+      for (var j = 0; j < bin.length; j++) bytes[j] = bin.charCodeAt(j);
+      return new TextDecoder("utf-8").decode(new Uint8Array(bytes));
+    }
+    var enc = "";
+    for (var k = 0; k < bin.length; k++) {
+      var h = bin.charCodeAt(k).toString(16);
+      enc += "%" + (h.length < 2 ? "0" + h : h);
+    }
+    return decodeURIComponent(enc);
+  }
+
+  /* ---------- data load ---------- */
+
+  var pool = [];
+  var loadError = "";
+  try {
+    var dataEl = document.getElementById("quiz-data");
+    if (!dataEl) throw new Error("data block missing from page");
+    var raw = (dataEl.textContent || "").trim();
+    if (!raw) throw new Error("data block empty");
+    var parsed = (raw.charAt(0) === "[") ? JSON.parse(raw) : JSON.parse(decodeB64Utf8(raw));
+    // Keep only usable multiple-choice entries: an object with >=2 options.
+    pool = safeArray(parsed).filter(function (q) {
+      return q && typeof q === "object" && safeArray(q.options).length >= 2;
+    });
+    if (!pool.length) throw new Error("no usable questions found");
+  } catch (err) {
+    pool = [];
+    loadError = String((err && err.message) || err);
+    if (window.console && console.warn) console.warn("Quiz data unavailable:", err);
+  }
+
+  // Normalise a raw question into a render-safe shape.
+  function normalise(q) {
+    var options = safeArray(q.options).map(asText).filter(function (t) { return t.length > 0; });
+    if (options.length < 2) options = safeArray(q.options).map(asText);
+    var answer = (typeof q.answer === "number" && q.answer >= 0 && q.answer < options.length)
+      ? q.answer
+      : 0;
+    return {
+      id: asText(q.id),
+      week: q.week,
+      topic: asText(q.topic),
+      question: asText(q.question) || "(Missing question text)",
+      options: options,
+      answer: answer,
+      explanation_en: asText(q.explanation_en),
+      explanation_zh: asText(q.explanation_zh)
+    };
+  }
+
+  // Prepare a question for display: shuffle options, remap the answer index.
+  function prepare(q) {
+    var n = normalise(q);
+    var tagged = n.options.map(function (text, i) {
+      return { text: text, correct: i === n.answer };
+    });
+    var mixed = shuffle(tagged);
+    var correctIndex = 0;
+    for (var i = 0; i < mixed.length; i++) {
+      if (mixed[i].correct) { correctIndex = i; break; }
+    }
+    return {
+      id: n.id,
+      week: n.week,
+      topic: n.topic,
+      question: n.question,
+      options: mixed.map(function (o) { return o.text; }),
+      correctIndex: correctIndex,
+      explanation_en: n.explanation_en,
+      explanation_zh: n.explanation_zh
+    };
+  }
+
+  /* ---------- state ---------- */
+
+  var state = {
+    round: [],
+    index: 0,
+    score: 0,
+    answered: false
+  };
+
+  /* ---------- element refs ---------- */
+
+  var els = {
+    screens: {
+      start: document.getElementById("screen-start"),
+      question: document.getElementById("screen-question"),
+      results: document.getElementById("screen-results")
+    },
+    poolCount: document.getElementById("pool-count"),
+    btnStart: document.getElementById("btn-start"),
+    progressLabel: document.getElementById("progress-label"),
+    scoreLabel: document.getElementById("score-label"),
+    progressBar: document.getElementById("progress-bar"),
+    progressFill: document.getElementById("progress-fill"),
+    chip: document.getElementById("q-chip"),
+    qText: document.getElementById("q-text"),
+    options: document.getElementById("options"),
+    feedback: document.getElementById("feedback"),
+    explain: document.getElementById("explain"),
+    explainEn: document.getElementById("explain-en"),
+    explainZh: document.getElementById("explain-zh"),
+    btnNext: document.getElementById("btn-next"),
+    resultScore: document.getElementById("result-score"),
+    resultVerdict: document.getElementById("result-verdict"),
+    review: document.getElementById("review"),
+    btnAgain: document.getElementById("btn-again")
+  };
+
+  function showScreen(name) {
+    Object.keys(els.screens).forEach(function (k) {
+      els.screens[k].classList.toggle("active", k === name);
+    });
+    window.scrollTo(0, 0);
+  }
+
+  /* ---------- start screen ---------- */
+
+  function initStart() {
+    var count = pool.length;
+    if (count === 0) {
+      els.poolCount.textContent = "Can't load the question bank" + (loadError ? " (" + loadError + ")" : "") + ". Try opening this file in Safari or Chrome.";
+      els.btnStart.disabled = true;
+      return;
+    }
+    var perRound = Math.min(ROUND_SIZE, count);
+    els.poolCount.textContent = count + " questions in the bank";
+    if (perRound < ROUND_SIZE) {
+      els.poolCount.textContent += " \u00b7 " + perRound + " per round";
+    }
+    els.btnStart.disabled = false;
+  }
+
+  /* ---------- round ---------- */
+
+  function startRound() {
+    if (!pool.length) return;
+    var picked = sampleDistinct(pool, ROUND_SIZE);
+    state.round = picked.map(prepare);
+    state.index = 0;
+    state.score = 0;
+    state.answered = false;
+    showScreen("question");
+    renderQuestion();
+  }
+
+  function renderQuestion() {
+    var cur = state.round[state.index];
+    var total = state.round.length;
+    var n = state.index + 1;
+
+    state.answered = false;
+
+    els.progressLabel.textContent = "Question " + n + " / " + total;
+    els.scoreLabel.textContent = String(state.score);
+
+    var pct = total ? Math.round((state.index / total) * 100) : 0;
+    els.progressFill.style.width = pct + "%";
+    els.progressBar.setAttribute("aria-valuenow", String(pct));
+    els.progressBar.setAttribute("aria-valuemax", "100");
+
+    // Chip: "Week N · Topic"
+    var chipParts = [];
+    if (cur.week !== undefined && cur.week !== null && asText(cur.week) !== "") {
+      chipParts.push("Week " + asText(cur.week));
+    }
+    if (cur.topic) chipParts.push(cur.topic);
+    if (chipParts.length) {
+      els.chip.textContent = chipParts.join(" \u00b7 ");
+      els.chip.hidden = false;
+    } else {
+      els.chip.hidden = true;
+    }
+
+    els.qText.textContent = cur.question;
+
+    // build options
+    els.options.textContent = "";
+    cur.options.forEach(function (text, i) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "option";
+      btn.setAttribute("data-index", String(i));
+
+      var mark = document.createElement("span");
+      mark.className = "mark";
+      mark.textContent = LETTERS[i] || String(i + 1);
+
+      var span = document.createElement("span");
+      span.className = "otext";
+      span.textContent = text || "(no option text)";
+
+      btn.appendChild(mark);
+      btn.appendChild(span);
+      btn.addEventListener("click", function () { answer(i); });
+      els.options.appendChild(btn);
+    });
+
+    // reset feedback / explanation / next
+    els.feedback.textContent = "";
+    els.feedback.className = "feedback";
+    els.explain.hidden = true;
+    els.explainEn.textContent = "";
+    els.explainZh.textContent = "";
+    els.btnNext.hidden = true;
+    els.btnNext.textContent = (state.index === total - 1) ? "See Results" : "Next Question";
+  }
+
+  function answer(selectedIndex) {
+    if (state.answered) return;
+    state.answered = true;
+
+    var cur = state.round[state.index];
+    var correctIndex = cur.correctIndex;
+
+    var buttons = els.options.querySelectorAll("button.option");
+
+    // lock everything, mark correct always
+    Array.prototype.forEach.call(buttons, function (btn) {
+      btn.disabled = true;
+      var i = Number(btn.getAttribute("data-index"));
+      if (i === correctIndex) {
+        btn.classList.add("is-correct");
+      } else if (i === selectedIndex) {
+        btn.classList.add("is-wrong");
+      } else {
+        btn.classList.add("is-dim");
+      }
+    });
+
+    var isCorrect = selectedIndex === correctIndex;
+    if (isCorrect) {
+      state.score += 1;
+      els.scoreLabel.textContent = String(state.score);
+      els.feedback.textContent = "Correct!";
+      els.feedback.className = "feedback ok";
+    } else {
+      els.feedback.textContent = "Not quite";
+      els.feedback.className = "feedback no";
+    }
+
+    // explanation
+    els.explainEn.textContent = cur.explanation_en || "(No English explanation provided.)";
+    els.explainZh.textContent = cur.explanation_zh || "(No Chinese explanation provided.)";
+    els.explain.hidden = false;
+
+    // show next button
+    els.btnNext.hidden = false;
+
+    // auto-scroll explanation into view
+    try {
+      els.explain.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    } catch (e) {
+      els.explain.scrollIntoView();
+    }
+  }
+
+  function next() {
+    if (state.index >= state.round.length - 1) {
+      showResults();
+      return;
+    }
+    state.index += 1;
+    renderQuestion();
+  }
+
+  /* ---------- results ---------- */
+
+  function verdictFor(score, total) {
+    if (total === 0) return "No questions were available.";
+    var ratio = score / total;
+    if (ratio >= 0.9) return "Excellent work \u2014 you are exam-ready.";
+    if (ratio >= 0.7) return "Strong round \u2014 a quick review will lock it in.";
+    if (ratio >= 0.5) return "Solid start \u2014 revise the misses below.";
+    return "Keep revising \u2014 review every item below.";
+  }
+
+  function showResults() {
+    var total = state.round.length;
+    els.resultScore.innerHTML = "";
+    els.resultScore.appendChild(document.createTextNode(String(state.score) + " "));
+    var small = document.createElement("small");
+    small.textContent = "/ " + total;
+    els.resultScore.appendChild(small);
+
+    els.resultVerdict.textContent = verdictFor(state.score, total);
+
+    els.review.textContent = "";
+    state.round.forEach(function (cur, i) {
+      var details = document.createElement("details");
+      details.className = "review-item";
+
+      var summary = document.createElement("summary");
+      var qText = document.createElement("span");
+      qText.className = "review-q";
+      qText.textContent = (i + 1) + ". " + cur.question;
+      summary.appendChild(qText);
+      details.appendChild(summary);
+
+      var body = document.createElement("div");
+      body.className = "review-body";
+
+      var ans = document.createElement("div");
+      ans.className = "review-answer";
+      var k = document.createElement("span");
+      k.className = "k";
+      k.textContent = "Correct answer";
+      ans.appendChild(k);
+      var correctText = cur.options[cur.correctIndex];
+      ans.appendChild(document.createTextNode(
+        (LETTERS[cur.correctIndex] || String(cur.correctIndex + 1)) + ". " +
+        (correctText || "(no option text)")
+      ));
+      body.appendChild(ans);
+
+      var explain = document.createElement("div");
+      explain.className = "explain";
+
+      var l1 = document.createElement("p");
+      l1.className = "explain-label";
+      l1.textContent = "Explanation";
+      explain.appendChild(l1);
+
+      var p1 = document.createElement("p");
+      p1.textContent = cur.explanation_en || "(No English explanation provided.)";
+      explain.appendChild(p1);
+
+      var div = document.createElement("div");
+      div.className = "divider";
+      explain.appendChild(div);
+
+      var l2 = document.createElement("p");
+      l2.className = "explain-label";
+      l2.textContent = "中文解釋";
+      explain.appendChild(l2);
+
+      var p2 = document.createElement("p");
+      p2.className = "zh";
+      p2.textContent = cur.explanation_zh || "(No Chinese explanation provided.)";
+      explain.appendChild(p2);
+
+      body.appendChild(explain);
+      details.appendChild(body);
+      els.review.appendChild(details);
+    });
+
+    if (total === 0) {
+      var note = document.createElement("p");
+      note.className = "empty-note";
+      note.textContent = "No questions were available for this round.";
+      els.review.appendChild(note);
+    }
+
+    showScreen("results");
+  }
+
+  /* ---------- wire up ---------- */
+
+  els.btnStart.addEventListener("click", startRound);
+  els.btnNext.addEventListener("click", next);
+  els.btnAgain.addEventListener("click", startRound);
+
+  initStart();
+
+  // expose a tiny hook for automated testing (harmless in production)
+  window.__quizApp = {
+    startRound: startRound,
+    getState: function () {
+      return {
+        total: state.round.length,
+        index: state.index,
+        score: state.score,
+        poolSize: pool.length
+      };
+    }
+  };
+})();
+</script>
+</body>
+</html>
